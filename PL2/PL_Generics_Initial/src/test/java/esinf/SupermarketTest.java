@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 
 public class SupermarketTest {
     private Supermarket instance;
+    private List<Invoice> invoices;
     
     public SupermarketTest() throws IOException, Exception {
         instance = new Supermarket();
         List<String> l = Files.lines(Paths.get("files/invoices.txt")).collect(Collectors.toList());
-        instance.getInvoices(l);        
+        invoices = instance.getInvoices(l);
     }
 
     @Test
@@ -31,7 +32,7 @@ public class SupermarketTest {
         result.put(new Invoice("INV003"),4);
         result.put(new Invoice("INV004"),4);
         
-        Map<Invoice,Integer> expResult = instance.numberOfProductsPerInvoice();
+        Map<Invoice,Integer> expResult = instance.numberOfProductsPerInvoice(invoices);
         assertEquals(expResult, result);
     }
 
@@ -59,7 +60,7 @@ public class SupermarketTest {
     @Test
     public void testConvertInvoices() {
         System.out.println("convertInvoices");
-        Map<String, Set<Invoice>> result = instance.convertInvoices();
+        Map<String, Set<Invoice>> result = instance.convertInvoices(instance.sup);
         Set <Invoice> r = result.get("COCONUT");
         assertTrue(r.contains(new Invoice("INV004",null)));
         r = result.get("APPLE");

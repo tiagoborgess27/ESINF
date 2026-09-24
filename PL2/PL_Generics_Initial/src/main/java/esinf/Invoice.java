@@ -14,7 +14,7 @@ public class Invoice implements Comparable<Invoice> {
             this.date = LocalDate.of(Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]));
         }
     }
-    
+
     public Invoice(String reference) {
         this(reference, "1900/01/01");
     }    
@@ -37,18 +37,18 @@ public class Invoice implements Comparable<Invoice> {
 
    @Override
     public boolean equals(Object obj) {
-       
-        throw new UnsupportedOperationException("Not supported yet.");
+     Invoice invoice = (Invoice)obj;  
+     return reference.equals(invoice.reference);
     }
     
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return reference.hashCode();
     }
 
     @Override
     public int compareTo(Invoice o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return reference.compareTo(o.reference);
     }
 
 }

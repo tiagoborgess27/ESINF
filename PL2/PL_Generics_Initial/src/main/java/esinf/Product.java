@@ -41,18 +41,18 @@ public class Product implements Comparable<Product> {
     
     @Override
     public boolean equals(Object obj) {
-       
-        throw new UnsupportedOperationException("Not supported yet.");
+        Product product = (Product)obj;  
+        return identification.equals(product.identification);
     }
     
     @Override
     public int hashCode() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return identification.hashCode();
     }
 
     @Override
     public int compareTo(Product p) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return identification.compareTo(p.identification);
     }
 
 }
