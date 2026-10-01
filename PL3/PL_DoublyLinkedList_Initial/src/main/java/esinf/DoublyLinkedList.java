@@ -5,27 +5,27 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.ConcurrentModificationException;
 
-
-/** Implementation of a doubly linked list with sentinel nodes
+/**
+ * Implementation of a doubly linked list with sentinel nodes
  *
  * @param <E> Generic list element type
  */
 public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
 
-// instance variables of the DoublyLinkedList
-    private final Node<E> header;     // header sentinel
-    private final Node<E> trailer;    // trailer sentinel
-    private int size = 0;       // number of elements in the list
-    private int modCount = 0;   // number of modifications to the list (adds or removes)
+    // instance variables of the DoublyLinkedList
+    private final Node<E> header; // header sentinel
+    private final Node<E> trailer; // trailer sentinel
+    private int size = 0; // number of elements in the list
+    private int modCount = 0; // number of modifications to the list (adds or removes)
 
     /**
      * Creates both elements which act as sentinels
      */
     public DoublyLinkedList() {
 
-        header = new Node<>(null, null, null);      // create header
-        trailer = new Node<>(null, header, null);   // trailer is preceded by header
-        header.setNext(trailer);                    // header is followed by trailer
+        header = new Node<>(null, null, null); // create header
+        trailer = new Node<>(null, header, null); // trailer is preceded by header
+        header.setNext(trailer); // header is followed by trailer
     }
 
     /**
@@ -34,7 +34,7 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
      * @return the number of elements in the linked list
      */
     public int size() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.size;
     }
 
     /**
@@ -43,7 +43,7 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
      * @return true if the list is empty, and false otherwise
      */
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.size == 0;
     }
 
     /**
@@ -52,7 +52,7 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
      * @return the first element of the list
      */
     public E first() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return isEmpty() ? null : header.getNext().getElement();
     }
 
     /**
@@ -61,10 +61,10 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
      * @return the last element of the list
      */
     public E last() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return isEmpty() ? null : trailer.getPrev().getElement();
     }
 
-// public update methods
+    // public update methods
     /**
      * Adds an element e to the front of the list
      *
@@ -72,7 +72,7 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
      */
     public void addFirst(E e) {
         // place just after the header
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.addBetween(e, header, header.getNext());
     }
 
     /**
@@ -82,7 +82,7 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
      */
     public void addLast(E e) {
         // place just before the trailer
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.addBetween(e, trailer.getPrev(), trailer);
     }
 
     /**
@@ -91,7 +91,7 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
      * @return the first element of the list
      */
     public E removeFirst() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.remove(header.getNext());
     }
 
     /**
@@ -100,16 +100,20 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
      * @return the last element of the list
      */
     public E removeLast() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.remove(trailer.getPrev());
     }
-    
-// private update methods
+
+    // private update methods
 
     /**
      * Adds an element e to the linked list between the two given nodes.
      */
     private void addBetween(E e, Node<E> predecessor, Node<E> successor) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Node<E> newest = new Node<>(e, predecessor, successor); // já aponta para os vizinhos
+        predecessor.setNext(newest);
+        successor.setPrev(newest);
+        size++;
+        modCount++;
     }
 
     /**
@@ -118,27 +122,30 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
     private E remove(Node<E> node) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
- 
-// Overriden methods        
+
+    // Overriden methods
     @Override
     public boolean equals(Object obj) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int hashCode() {        throw new UnsupportedOperationException("Not supported yet.");    }
-    
+    public int hashCode() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-//---------------- nested DoublyLinkedListIterator class ----------------        
+
+    // ---------------- nested DoublyLinkedListIterator class ----------------
     private class DoublyLinkedListIterator implements ListIterator<E> {
 
-        private DoublyLinkedList.Node<E> nextNode,prevNode,lastReturnedNode; // node that will be returned using next and prev respectively
-        private int nextIndex;  // Index of the next element
-        private int expectedModCount;  // Expected number of modifications = modCount;
+        private DoublyLinkedList.Node<E> nextNode, prevNode, lastReturnedNode; // node that will be returned using next
+                                                                               // and prev respectively
+        private int nextIndex; // Index of the next element
+        private int expectedModCount; // Expected number of modifications = modCount;
 
         public DoublyLinkedListIterator() {
             this.prevNode = header;
@@ -148,33 +155,43 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
             expectedModCount = modCount;
         }
 
-        final void  checkForComodification() {  // invalidate iterator on list modification outside the iterator
+        final void checkForComodification() { // invalidate iterator on list modification outside the iterator
             if (modCount != expectedModCount)
                 throw new ConcurrentModificationException();
-        }        
-        
+        }
+
         @Override
         public boolean hasNext() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return nextNode != trailer;
         }
 
         @Override
         public E next() throws NoSuchElementException {
             checkForComodification();
-            
-            throw new UnsupportedOperationException("Not supported yet.");
+
+            if (nextNode == trailer)
+                throw new NoSuchElementException();
+            lastReturnedNode = nextNode;
+            nextNode = nextNode.getNext();
+            nextIndex++;
+            return lastReturnedNode.getElement();
         }
 
         @Override
-        public boolean hasPrevious() {            
-            throw new UnsupportedOperationException("Not supported yet.");
+        public boolean hasPrevious() {
+            return prevNode != header;
         }
 
         @Override
-        public E previous() throws NoSuchElementException{
+        public E previous() throws NoSuchElementException {
             checkForComodification();
-            
-            throw new UnsupportedOperationException("Not supported yet.");
+
+            if (prevNode == header)
+                throw new NoSuchElementException();
+            lastReturnedNode = prevNode;
+            prevNode = prevNode.getPrev();
+            nextIndex--;
+            return lastReturnedNode.getElement();
         }
 
         @Override
@@ -190,43 +207,44 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
         @Override
         public void remove() throws NoSuchElementException {
             checkForComodification();
-            
+
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
         public void set(E e) throws NoSuchElementException {
-            if (lastReturnedNode==null) throw new NoSuchElementException();
+            if (lastReturnedNode == null)
+                throw new NoSuchElementException();
             checkForComodification();
-            
+
             lastReturnedNode.setElement(e);
         }
 
         @Override
         public void add(E e) {
-            checkForComodification();  
-            
+            checkForComodification();
+
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-    }    //----------- end of inner DoublyLinkedListIterator class ----------
-    
-//---------------- Iterable implementation ----------------
+    } // ----------- end of inner DoublyLinkedListIterator class ----------
+
+    // ---------------- Iterable implementation ----------------
     @Override
     public Iterator<E> iterator() {
         return new DoublyLinkedListIterator();
     }
-    
+
     public ListIterator<E> listIterator() {
         return new DoublyLinkedListIterator();
     }
-    
-//---------------- nested Node class ----------------
+
+    // ---------------- nested Node class ----------------
     private static class Node<E> {
 
-        private E element;      // reference to the element stored at this node
-        private Node<E> prev;   // reference to the previous node in the list
-        private Node<E> next;   // reference to the subsequent node in the list
+        private E element; // reference to the element stored at this node
+        private Node<E> prev; // reference to the previous node in the list
+        private Node<E> next; // reference to the subsequent node in the list
 
         public Node(E element, Node<E> prev, Node<E> next) {
             this.element = element;
@@ -245,10 +263,10 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
         public Node<E> getNext() {
             return next;
         }
-        
+
         public void setElement(E element) { // Not on the original interface. Added due to list iterator implementation
             this.element = element;
-        }        
+        }
 
         public void setPrev(Node<E> prev) {
             this.prev = prev;
@@ -257,6 +275,6 @@ public class DoublyLinkedList<E> implements Iterable<E>, Cloneable {
         public void setNext(Node<E> next) {
             this.next = next;
         }
-    } //----------- end of nested Node class ----------
-    
+    } // ----------- end of nested Node class ----------
+
 }
