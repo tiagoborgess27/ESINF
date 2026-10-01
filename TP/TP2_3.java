@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class TP2 {
+public class TP2_3 {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }
