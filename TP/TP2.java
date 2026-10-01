@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +44,68 @@ public class TP2 {
                 sum += serie.get(i - period + 1 + j);
             }
             result.add(sum / period);
+        }
+
+        return result;
+    }
+
+    public boolean validateTags(String[] tags) {
+        Stack<String> stack = new Stack<>();
+        for (String tag : tags) {
+            if (tag.startsWith("<") && !tag.startsWith("</")) {
+                stack.push(tag);
+            } else if (tag.startsWith("</")) {
+                if (stack.isEmpty() || !stack.peek().equals("<" + tag.substring(2))) {
+                    return false;
+                }
+                stack.pop();
+            }
+        }
+        return stack.isEmpty();
+    }
+
+}
+
+public class Message {
+    String senderEmail;
+    Set<String> recipientlist;
+    String subject;
+    String text;
+
+    String getSender() {
+        return senderEmail;
+    }
+
+    Set<String> getrecipientlist() {
+        return recipientlist;
+    }
+}
+
+public class Server {
+    List<Message> Inbox;
+    List<Message> Outbox;
+
+    public List<Message> getInbox() {
+        return Inbox;
+    }
+
+    public List<Message> getOutbox() {
+        return Outbox;
+    }
+
+    public Map<String, Map<String, Integer>> NumberMessagesSent() {
+        Map<String, Map<String, Integer>> result = new HashMap<>();
+
+        for (Message msg : Outbox) {
+            String sender = msg.getSender();
+            Set<String> recipients = msg.getrecipientlist();
+
+            result.putIfAbsent(sender, new HashMap<>());
+            Map<String, Integer> senderRecipients = result.get(sender);
+
+            for (String recipient : recipients) {
+                senderRecipients.put(recipient, senderRecipients.getOrDefault(recipient, 0) + 1);
+            }
         }
 
         return result;
